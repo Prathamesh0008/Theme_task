@@ -53,82 +53,99 @@ console.log("Stats section is visible. Starting animation.");
 
 
 // team section
-document.addEventListener('DOMContentLoaded', function() {
-    const teamMembers = document.querySelector('.team-members');
-    const members = document.querySelectorAll('.team-member');
-    const prevBtn = document.querySelector('.arrow.left');
-    const nextBtn = document.querySelector('.arrow.right');
-    const dots = document.querySelectorAll('.dot');
-    
-    let currentIndex = 0;
-    const memberWidth = members[0].offsetWidth + 30; // width + gap
-    const visibleMembers = Math.min(4, Math.floor(window.innerWidth / memberWidth));
-    const totalSlides = Math.ceil(members.length / visibleMembers);
-    
-    // Initialize carousel
-    function initCarousel() {
-        teamMembers.style.transform = `translateX(0)`;
-        updateDots();
-        updateArrows();
+
+  const leftArrow = document.querySelector(".arrow.left");
+  const rightArrow = document.querySelector(".arrow.right");
+  const teamMembers = document.querySelector(".team-members");
+  const dots = document.querySelectorAll(".dot");
+
+  let currentIndex = 0;
+  const cardWidth = 260; // width + gap
+  const visibleCards = Math.floor(document.querySelector(".team-slider-container").offsetWidth / cardWidth);
+
+  function updateSlider() {
+    const offset = currentIndex * cardWidth * visibleCards;
+    teamMembers.style.transform = `translateX(-${offset}px)`;
+
+    dots.forEach(dot => dot.classList.remove("active"));
+    if (dots[currentIndex]) {
+      dots[currentIndex].classList.add("active");
     }
-    
-    // Move to specific slide
-    function goToSlide(index) {
-        if (index < 0 || index >= totalSlides) return;
-        
-        currentIndex = index;
-        const translateX = -currentIndex * visibleMembers * memberWidth;
-        teamMembers.style.transition = 'transform 0.5s ease';
-        teamMembers.style.transform = `translateX(${translateX}px)`;
-        
-        updateDots();
-        updateArrows();
+  }
+
+  rightArrow.addEventListener("click", () => {
+    const maxIndex = Math.ceil(teamMembers.children.length / visibleCards) - 1;
+    if (currentIndex < maxIndex) {
+      currentIndex++;
+      updateSlider();
     }
-    
-    // Update dot indicators
-    function updateDots() {
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentIndex);
-        });
+  });
+
+  leftArrow.addEventListener("click", () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateSlider();
     }
-    
-    // Update arrow buttons state
-    function updateArrows() {
-        prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
-        prevBtn.style.cursor = currentIndex === 0 ? 'not-allowed' : 'pointer';
-        
-        nextBtn.style.opacity = currentIndex >= totalSlides - 1 ? '0.5' : '1';
-        nextBtn.style.cursor = currentIndex >= totalSlides - 1 ? 'not-allowed' : 'pointer';
-    }
-    
-    // Event listeners
-    prevBtn.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            goToSlide(currentIndex - 1);
-        }
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener("click", () => {
+      currentIndex = parseInt(dot.getAttribute("data-index"));
+      updateSlider();
     });
+  });
+
+  window.addEventListener("resize", () => {
+    currentIndex = 0;
+    updateSlider();
+  });
+
+  updateSlider();
+
+
+
+
+
+
+const pricing_cards = document.getElementsByClassName("pricing-card");
+
+// Convert HTMLCollection to Array so we can loop
+Array.from(pricing_cards).forEach(card => {
+  card.addEventListener('click', function() {
+    // Remove 'active' from all cards
+    Array.from(pricing_cards).forEach(c => c.classList.remove('active'));
     
-    nextBtn.addEventListener('click', () => {
-        if (currentIndex < totalSlides - 1) {
-            goToSlide(currentIndex + 1);
-        }
-    });
-    
-    dots.forEach(dot => {
-        dot.addEventListener('click', () => {
-            const index = parseInt(dot.getAttribute('data-index'));
-            goToSlide(index);
-        });
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        const newVisibleMembers = Math.min(4, Math.floor(window.innerWidth / memberWidth));
-        if (newVisibleMembers !== visibleMembers) {
-            initCarousel();
-        }
-    });
-    
-    // Initialize on load
-    initCarousel();
+    // Add 'active' to the clicked card
+    this.classList.add('active');
+  });
 });
+
+
+const faq_cards = document.getElementsByClassName("faq-item");
+
+// Convert HTMLCollection to Array so we can loop
+Array.from(faq_cards).forEach(card => {
+  card.addEventListener('click', function() {
+    // Remove 'active' from all cards
+    Array.from(faq_cards).forEach(c => c.classList.remove('active'));
+    
+    // Add 'active' to the clicked card
+    this.classList.add('active');
+  });
+});
+
+// portfolio-filter
+
+  document.getElementById("portfolioFilterSelect").addEventListener("change", function () {
+    const value = this.value;
+    const items = document.querySelectorAll(".portfolio-item");
+
+    items.forEach(item => {
+      if (value === "all" || item.querySelector(".portfolio-tag").textContent.toLowerCase() === value) {
+        item.style.display = "block";
+      } else {
+        item.style.display = "none";
+      }
+    });
+  });
+
